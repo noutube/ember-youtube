@@ -12,6 +12,7 @@ export default Component.extend({
 	ytid: null,
 	width: 560,
 	height: 315,
+	speed: 1,
 
 	// These options are used to load a video.
 	startSeconds: undefined,
@@ -275,6 +276,7 @@ export default Component.extend({
 	loadVideo() {
 		const player = this.get('player');
 		const ytid = this.get('ytid');
+		const speed = this.get('speed');
 
 		// Set parameters for the video to be played.
 		let options = getProperties(this, ['startSeconds', 'endSeconds', 'suggestedQuality']);
@@ -284,6 +286,10 @@ export default Component.extend({
 			player.loadVideoById(options);
 		} else {
 			player.cueVideoById(options);
+		}
+
+		if (speed) {
+			player.setPlaybackRate(speed);
 		}
 	},
 
@@ -302,6 +308,17 @@ export default Component.extend({
 
 		player.setSize(width, height);
 	},
+
+	speedDidChange: observer('speed', function () {
+		const player = this.get('player');
+		const speed = this.get('speed');
+
+		if (!player) {
+			return;
+		}
+
+		player.setPlaybackRate(speed);
+	}),
 
 	updateTime() {
 		const player = this.get('player');
