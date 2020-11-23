@@ -287,6 +287,22 @@ export default Component.extend({
 		}
 	},
 
+	sizeDidChange: observer('width', 'height', function () {
+		run.debounce(this, 'resizePlayer', 100);
+	}),
+
+	resizePlayer() {
+		const player = this.get('player');
+		const width = this.get('width');
+		const height = this.get('height');
+
+		if (!player) {
+			return;
+		}
+
+		player.setSize(width, height);
+	},
+
 	updateTime() {
 		const player = this.get('player');
 		if (player && player.getDuration && player.getCurrentTime) {
