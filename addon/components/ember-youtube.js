@@ -35,6 +35,9 @@ export default Component.extend({
 	playerStateChanged() {
 		/* Callback to be passed. */
 	},
+	playbackRateChanged() {
+		/* Callback to be passed. */
+	},
 	error() {
 		/* Callback to be passed. */
 	},
@@ -198,6 +201,7 @@ export default Component.extend({
 						resolve(player);
 					},
 					onStateChange: this.onPlayerStateChange.bind(this),
+					onPlaybackRateChange: this.onPlaybackRateChange.bind(this),
 					onError: this.onPlayerError.bind(this)
 				}
 			});
@@ -217,6 +221,11 @@ export default Component.extend({
 		this.playerStateChanged(event);
 		// send actions inside
 		this.send(state);
+	},
+
+	// Gets called by the YouTube player.
+	onPlaybackRateChange(event) {
+		this.playbackRateChanged(event.data);
 	},
 
 	// Gets called by the YouTube player.
