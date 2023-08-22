@@ -23,7 +23,7 @@
     "deploy-surge": "mv dist/index.html dist/200.html; surge dist ember-youtube.surge.sh"
   },
   "dependencies": {
-    "ember-cli-babel": "^6.6.0",
+    "ember-cli-babel": "^7.26.6",
     "ember-cli-htmlbars": "^2.0.1",
     "ember-cli-htmlbars-inline-precompile": "^1.0.0"
   },
