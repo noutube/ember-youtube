@@ -3,8 +3,9 @@
 import Component from '@ember/component';
 import RSVP from 'rsvp'
 import { computed, getProperties, setProperties, observer } from '@ember/object';
+import { or } from '@ember/object/computed';
 import { debug } from '@ember/debug';
-import { run } from '@ember/runloop';
+import { debounce, schedule } from '@ember/runloop';
 
 export default Component.extend({
 	classNames: ['EmberYoutube'],
@@ -22,7 +23,7 @@ export default Component.extend({
 	showControls: false,
 	showDebug: false,
 	showProgress: false,
-	showExtras: computed.or('showControls', 'showProgress', 'showDebug'),
+	showExtras: or('showControls', 'showProgress', 'showDebug'),
 
 	player: null,
 	playerState: 'loading',
@@ -89,7 +90,7 @@ export default Component.extend({
 	_register() {
 		const delegate = this.get('delegate');
 		const delegateAs = this.get('delegate-as');
-		run.schedule('afterRender', () => {
+		schedule('afterRender', () => {
 			if (!delegate) {
 				return;
 			}
@@ -316,7 +317,7 @@ export default Component.extend({
 	},
 
 	sizeDidChange: observer('width', 'height', function () {
-		run.debounce(this, 'resizePlayer', 100);
+		debounce(this, 'resizePlayer', 100);
 	}),
 
 	resizePlayer() {

@@ -1,37 +1,37 @@
 <div class="EmberYoutube-player"></div>
 
-{{#if showExtras}}
+{{#if this.showExtras}}
 	<div class="EmberYoutube-extras">
-		{{#if showControls}}
+		{{#if this.showControls}}
 			<menu class="EmberYoutube-controls">
-				<button {{action 'togglePlay'}}>{{#if isPlaying}}Pause{{else}}Play{{/if}}</button>
-				<button {{action 'toggleVolume'}}>{{#if isMuted}}Unmute{{else}}Mute{{/if}}</button>
+				<button {{action 'togglePlay'}}>{{#if this.isPlaying}}Pause{{else}}Play{{/if}}</button>
+				<button {{action 'toggleVolume'}}>{{#if this.isMuted}}Unmute{{else}}Mute{{/if}}</button>
 			</menu>
 		{{/if}}
 
-		{{#if showProgress}}
+		{{#if this.showProgress}}
 			<p class="EmberYoutube-progress">
-				<progress value={{currentTime}} max={{duration}}></progress>
+				<progress value={{this.currentTime}} max={{this.duration}}></progress>
 			</p>
 		{{/if}}
 
-		{{#if showDebug}}
+		{{#if this.showDebug}}
 			<p class="EmberYoutube-debug">
 				<code>
-					ytid: {{ytid}}<br>
-					playerState: {{playerState}}<br>
-					isMuted: {{isMuted}}<br>
-					isPlaying: {{isPlaying}}<br>
-					currentTime: {{currentTime}}<br>
-					duration: {{duration}}<br>
-					volume: {{volume}}<br>
+					ytid: {{this.ytid}}<br>
+					playerState: {{this.playerState}}<br>
+					isMuted: {{this.isMuted}}<br>
+					isPlaying: {{this.isPlaying}}<br>
+					currentTime: {{this.currentTime}}<br>
+					duration: {{this.duration}}<br>
+					volume: {{this.volume}}<br>
 				</code>
 			</p>
 		{{/if}}
 	</div>
 {{/if}}
 
-{{#if has-block}}
+{{#if (has-block)}}
 	<div class="EmberYoutube-yield">
 		{{yield}}
 	</div>
