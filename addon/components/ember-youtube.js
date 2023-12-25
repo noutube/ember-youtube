@@ -5,7 +5,6 @@ import RSVP from 'rsvp'
 import { computed, getProperties, setProperties, observer } from '@ember/object';
 import { debug } from '@ember/debug';
 import { run } from '@ember/runloop';
-import { task } from 'ember-concurrency';
 
 export default Component.extend({
 	classNames: ['EmberYoutube'],
@@ -27,6 +26,8 @@ export default Component.extend({
 
 	player: null,
 	playerState: 'loading',
+
+	playerLoadInFlight: false,
 
 	/* Hooks */
 	playerCreated() {
@@ -104,13 +105,11 @@ export default Component.extend({
 		if (!this.get('lazyload') && this.get('ytid')) {
 			// If "lazyload" is not enabled and we have an ID, we can start immediately.
 			// Otherwise the `loadVideo` observer will take care of things.
-			this.get('loadAndCreatePlayer').perform();
+			this.loadAndCreatePlayer();
 		}
 	},
 
 	willDestroyElement() {
-		this.get('loadAndCreatePlayer').cancelAll();
-
 		// clear the timer
 		this.stopTimer();
 
@@ -132,10 +131,22 @@ export default Component.extend({
 		}
 	},
 
-	loadAndCreatePlayer: task(function * () {
+	async loadAndCreatePlayer() {
+		if (this.playerLoadInFlight) {
+			return;
+		}
+
+		this.playerLoadInFlight = true;
+
 		try {
-			yield this.loadYouTubeApi();
-			let player = yield this.createPlayer();
+			await this.loadYouTubeApi();
+			if (this.get('isDestroying')) {
+				return;
+			}
+			let player = await this.createPlayer();
+			if (this.get('isDestroying')) {
+				return;
+			}
 
 			this.setProperties({
 				player,
@@ -150,9 +161,11 @@ export default Component.extend({
 				debug(err);
 			}
 
-			throw err
+			throw err;
+		} finally {
+			this.playerLoadInFlight = false;
 		}
-	}).drop(),
+	},
 
 	// A promise that is resolved when window.onYouTubeIframeAPIReady is called.
 	// The promise is resolved with a reference to window.YT object.
@@ -276,7 +289,7 @@ export default Component.extend({
 		}
 
 		if (!player) {
-			this.get('loadAndCreatePlayer').perform();
+			this.loadAndCreatePlayer();
 			return;
 		}
 		this.loadVideo();
@@ -414,7 +427,7 @@ export default Component.extend({
 		let element = event.srcElement;
 		if (element.tagName.toLowerCase() !== "progress") return;
 		// get the x position of the click inside our progress el
-		let x = event.pageX - element.getBoundingClientRect().x;	
+		let x = event.pageX - element.getBoundingClientRect().x;
 		// convert it to a value relative to the duration (max)
 		let clickedValue = (x * element.max) / element.offsetWidth;
 		// 250 = 0.25 seconds into player
