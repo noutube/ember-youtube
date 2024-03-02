@@ -40,6 +40,9 @@ export default Component.extend({
 	playbackRateChanged() {
 		/* Callback to be passed. */
 	},
+	currentTimeChanged() {
+		/* Callback to be passed. */
+	},
 	error() {
 		/* Callback to be passed. */
 	},
@@ -348,6 +351,7 @@ export default Component.extend({
 		if (player && player.getDuration && player.getCurrentTime) {
 			this.set('currentTime', player.getCurrentTime());
 			this.set('duration', player.getDuration());
+			this.currentTimeChanged(player.getCurrentTime());
 		}
 	},
 
